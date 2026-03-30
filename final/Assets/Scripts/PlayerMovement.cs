@@ -47,7 +47,17 @@ public class FirstPersonMovement : MonoBehaviour
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-        Vector3 move = transform.right * x + transform.forward * z;
+        // Use the camera's forward/right so we walk where we are looking
+        Vector3 forward = playerCamera.forward;
+        Vector3 right = playerCamera.right;
+
+        // Keep movement on the ground plane (ignore camera tilt)
+        forward.y = 0f;
+        right.y = 0f;
+        forward.Normalize();
+        right.Normalize();
+
+        Vector3 move = (right * x + forward * z);
         controller.Move(move * moveSpeed * Time.deltaTime);
         
         if (controller.isGrounded && velocity.y < 0)
