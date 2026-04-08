@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ScanningLight : MonoBehaviour
+public class SpotlightSweep : MonoBehaviour
 {
     [Header("Patrol Settings")]
     public float rotationAngle = 45f;

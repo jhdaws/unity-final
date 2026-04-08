@@ -23,6 +23,8 @@ public class PlayerHealth : MonoBehaviour
 
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        Debug.Log($"Player took {amount:F2} damage. Health: {currentHealth:F2}/{maxHealth:F2}");
         
         OnHealthChanged?.Invoke(currentHealth / maxHealth); // Sends 0.0 - 1.0 value
 
