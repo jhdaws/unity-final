@@ -4,42 +4,58 @@ public class FirstPersonMovement : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
-    public float gravity = -9.81f;
+    public float jumpHeight = 1.5f;
+    public float gravity = -19.62f; // Snappier gravity for horror
     
-    [Header("Look Settings")]
-    public float mouseSensitivity = 100f;
-    public Transform playerCamera;
+    [Header("Crouch Settings")]
+    public float crouchHeight = 1f;
+    public float standingHeight = 2f;
+    public float crouchSpeed = 2.5f;
+
+    [Header("References")]
+    public Transform playerCamera; 
 
     private CharacterController controller;
     private Vector3 velocity;
-    private float xRotation = 0f;
+    private bool isCrouching = false;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        
-        // hides cursor and locks it
         Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
-        HandleLook();
+        HandleCrouch();
+        HandleJump();
         HandleMovement();
     }
 
-    void HandleLook()
+    void HandleCrouch()
     {
-        // pitch
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            isCrouching = true;
+            controller.height = crouchHeight;
+            // Shift the camera down
+            playerCamera.localPosition = new Vector3(0, 0.4f, 0); 
+        }
 
-        // yaw
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f); // clamp to prevent flipping upside down
-        playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        if (Input.GetKeyUp(KeyCode.LeftControl))
+        {
+            isCrouching = false;
+            controller.height = standingHeight;
+            playerCamera.localPosition = new Vector3(0, 0.8f, 0);
+        }
+    }
 
-        transform.Rotate(Vector3.up * mouseX);
+    void HandleJump()
+    {
+        if (Input.GetButtonDown("Jump") && controller.isGrounded)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        }
     }
 
     void HandleMovement()
@@ -47,19 +63,20 @@ public class FirstPersonMovement : MonoBehaviour
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-        // Use the camera's forward/right so we walk where we are looking
+        // Use Camera vectors but flatten them (ignore Y) so we don't fly/sink
         Vector3 forward = playerCamera.forward;
         Vector3 right = playerCamera.right;
-
-        // Keep movement on the ground plane (ignore camera tilt)
-        forward.y = 0f;
-        right.y = 0f;
+        forward.y = 0;
+        right.y = 0;
         forward.Normalize();
         right.Normalize();
 
-        Vector3 move = (right * x + forward * z);
-        controller.Move(move * moveSpeed * Time.deltaTime);
+        float currentSpeed = isCrouching ? crouchSpeed : moveSpeed;
+        Vector3 moveDir = (forward * z + right * x).normalized;
         
+        controller.Move(moveDir * currentSpeed * Time.deltaTime);
+        
+        // Apply Gravity
         if (controller.isGrounded && velocity.y < 0)
         {
             velocity.y = -2f; 
