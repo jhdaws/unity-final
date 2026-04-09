@@ -49,6 +49,7 @@
     <Analyzer Include="/Applications/Unity/Hub/Editor/6000.3.6f1/Unity.app/Contents/Resources/BuildPipeline/Unity.SourceGenerators/Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets/Scripts/SpotlightTracking.cs" />
     <Compile Include="Assets/Scripts/PlayerHealth.cs" />
     <Compile Include="Assets/Scripts/SpotlightDetection.cs" />
     <Compile Include="Assets/Scripts/FirstPersonMovement.cs" />

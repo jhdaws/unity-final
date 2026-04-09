@@ -1181,7 +1181,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8c219b6377b6b4f31b19a583c5186b07, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StaticSpotlightDamage
+  m_EditorClassIdentifier: Assembly-CSharp::SpotlightDetection
   visionOrigin: {fileID: 0}
   spotLight: {fileID: 0}
   playerMask:
