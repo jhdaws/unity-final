@@ -3,119 +3,141 @@ using UnityEngine;
 public class SpotlightDetection : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private Transform visionOrigin;
     [SerializeField] private Light spotLight;
 
     [Header("Detection")]
-    [SerializeField] private LayerMask playerMask;
-    [SerializeField] private LayerMask obstacleMask;
+    [SerializeField] private LayerMask obstacleMask = ~0;
     [SerializeField] private float targetHeightOffset = 1.0f;
-    [SerializeField] private float hitRadius = 0.15f;
+    [SerializeField] private bool debugVisibilityLogs;
 
     [Header("Damage")]
     [SerializeField] private float damagePerSecond = 20f;
 
     private Transform playerTransform;
     private PlayerHealth playerHealth;
+    private bool playerVisible;
+    private bool wasPlayerVisible;
+    private Vector3 visibleAimPoint;
+    private int visibilityMask;
+
+    public bool PlayerVisible => playerVisible;
+    public Vector3 CurrentVisibleAimPoint => visibleAimPoint;
+    public Transform PlayerTransform => playerTransform;
 
     private void Awake()
     {
-        if (visionOrigin == null)
-        {
-            visionOrigin = transform;
-        }
-
         if (spotLight == null)
         {
             spotLight = GetComponentInChildren<Light>();
-        }
-    }
-
-    private void Reset()
-    {
-        if (visionOrigin == null)
-        {
-            visionOrigin = transform;
-        }
-
-        if (spotLight == null)
-        {
-            spotLight = GetComponentInChildren<Light>();
-        }
-
-        if (playerMask == 0)
-        {
-            int layer = LayerMask.NameToLayer("Player");
-            if (layer >= 0) playerMask = 1 << layer;
-        }
-
-        if (obstacleMask == 0)
-        {
-            obstacleMask = ~0;
         }
     }
 
     private void Start()
     {
-        GameObject p = GameObject.FindGameObjectWithTag("Player");
-        if (p != null)
-        {
-            playerTransform = p.transform;
-            playerHealth = p.GetComponent<PlayerHealth>();
-        }
+        ResolvePlayer();
     }
 
     private void Update()
     {
-        if (playerTransform == null || playerHealth == null || spotLight == null || visionOrigin == null) return;
-
-        if (CanSeePlayer())
+        if (playerTransform == null || playerHealth == null || spotLight == null)
         {
-            ApplyLightDamage();
-        }        
+            return;
+        }
+
+        playerVisible = ComputeVisibility(out Vector3 detectedAimPoint);
+        if (playerVisible)
+        {
+            visibleAimPoint = detectedAimPoint;
+            playerHealth.TakeDamage(damagePerSecond * Time.deltaTime);
+        }
+
+        if (debugVisibilityLogs && playerVisible != wasPlayerVisible)
+        {
+            wasPlayerVisible = playerVisible;
+            Debug.Log(playerVisible
+                ? $"{name}: player visible"
+                : $"{name}: player not visible");
+        }
     }
 
-    private bool CanSeePlayer()
+    private bool ComputeVisibility(out Vector3 aimPoint)
     {
-        Vector3 origin = visionOrigin.position;
-        Vector3 target = playerTransform.position + (Vector3.up * targetHeightOffset);
-        Vector3 toTarget = target - origin;
+        aimPoint = playerTransform.position + (Vector3.up * targetHeightOffset);
 
-        float range = spotLight.range;
+        Vector3 origin = spotLight.transform.position + (spotLight.transform.forward * 0.05f);
+        Vector3 toTarget = aimPoint - origin;
         float sqrDistance = toTarget.sqrMagnitude;
-        if (sqrDistance > range * range)
+
+        if (sqrDistance > spotLight.range * spotLight.range)
         {
             return false;
         }
 
         float halfAngle = spotLight.spotAngle * 0.5f;
-        float angle = Vector3.Angle(visionOrigin.forward, toTarget);
-        if (angle > halfAngle)
+        float angleToTarget = Vector3.Angle(spotLight.transform.forward, toTarget);
+        if (angleToTarget > halfAngle)
         {
             return false;
         }
 
         float distance = Mathf.Sqrt(sqrDistance);
-        Vector3 direction = toTarget / distance;
-        int mask = playerMask | obstacleMask;
-
-        if (Physics.SphereCast(origin, hitRadius, direction, out RaycastHit hit, distance, mask, QueryTriggerInteraction.Ignore))
+        if (distance <= 0.001f)
         {
-            return ((1 << hit.collider.gameObject.layer) & playerMask) != 0;
+            return true;
+        }
+
+        Vector3 direction = toTarget / distance;
+
+        RaycastHit[] hits = Physics.RaycastAll(origin, direction, distance, visibilityMask, QueryTriggerInteraction.Ignore);
+        if (hits.Length > 0)
+        {
+            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+            for (int i = 0; i < hits.Length; i++)
+            {
+                Collider hitCollider = hits[i].collider;
+                if (hitCollider == null)
+                {
+                    continue;
+                }
+
+                Transform hitTransform = hitCollider.transform;
+                if (hitTransform == transform || hitTransform.IsChildOf(transform))
+                {
+                    continue;
+                }
+
+                return hitTransform == playerTransform || hitTransform.IsChildOf(playerTransform);
+            }
         }
 
         return false;
     }
 
-    private void ApplyLightDamage()
+    private void ResolvePlayer()
     {
-        playerHealth.TakeDamage(damagePerSecond * Time.deltaTime);
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject == null)
+        {
+            return;
+        }
+
+        playerTransform = playerObject.transform;
+        playerHealth = playerObject.GetComponent<PlayerHealth>();
+        visibleAimPoint = playerTransform.position + (Vector3.up * targetHeightOffset);
+
+        int playerLayerMask = 1 << playerObject.layer;
+        visibilityMask = obstacleMask | playerLayerMask;
     }
 
     private void OnDrawGizmosSelected()
     {
-        if (visionOrigin == null || spotLight == null) return;
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawRay(visionOrigin.position, visionOrigin.forward * spotLight.range);
+        if (spotLight == null)
+        {
+            return;
+        }
+
+        Gizmos.color = playerVisible ? Color.red : Color.yellow;
+        Gizmos.DrawRay(spotLight.transform.position, spotLight.transform.forward * spotLight.range);
     }
 }
