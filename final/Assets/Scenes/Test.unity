@@ -1030,21 +1030,29 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2717517198484513490, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
+      propertyPath: targetHeightOffset
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2717517198484513490, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
+      propertyPath: debugVisibilityLogs
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5609274704457976874, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_Name
       value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.1
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.1
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.1
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1779,6 +1787,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 3131233156301622581, guid: 8eb2d1b6428e94613975bf9aafc33a5d, type: 3}
+      propertyPath: moveSpeed
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3338753229214622597, guid: 8eb2d1b6428e94613975bf9aafc33a5d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1805,11 +1817,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5660350898606884197, guid: 8eb2d1b6428e94613975bf9aafc33a5d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.895
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5660350898606884197, guid: 8eb2d1b6428e94613975bf9aafc33a5d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.293
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 5660350898606884197, guid: 8eb2d1b6428e94613975bf9aafc33a5d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1866,15 +1878,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4217418718368388456, guid: 26de74f27cc354c84b1f7f45652ba59a, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.1
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 4217418718368388456, guid: 26de74f27cc354c84b1f7f45652ba59a, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.1
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 4217418718368388456, guid: 26de74f27cc354c84b1f7f45652ba59a, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.1
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 4217418718368388456, guid: 26de74f27cc354c84b1f7f45652ba59a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2103,7 +2115,7 @@ Transform:
   m_GameObject: {fileID: 1090373556}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.895, y: 0.44300002, z: -3.555}
+  m_LocalPosition: {x: 0, y: 0.45000002, z: -3.555}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3018,21 +3030,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2717517198484513490, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
+      propertyPath: targetHeightOffset
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2717517198484513490, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
+      propertyPath: debugVisibilityLogs
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2717517198484513490, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
+      propertyPath: playerLookupInterval
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 5609274704457976874, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_Name
       value: Enemy (1)
       objectReference: {fileID: 0}
     - target: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.1
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.1
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.1
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_LocalPosition.x
