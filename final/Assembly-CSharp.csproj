@@ -58,6 +58,7 @@
     <Compile Include="Assets/Scripts/GameManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets/LoafbrrAssets/MInesAndCaveSet/README.txt" />
     <None Include="Assets/Scripts/codex.txt" />
     <None Include="Assets/Backrooms/LoafbrrAssets/BackroomsLikeAsset2/README.txt" />
     <None Include="Assets/Backrooms/BackroomsLikeAssetRe_Blend_fbx_glb/README.txt" />

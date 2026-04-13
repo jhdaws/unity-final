@@ -1036,7 +1036,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2717517198484513490, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: debugVisibilityLogs
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5609274704457976874, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_Name
@@ -3036,7 +3036,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2717517198484513490, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: debugVisibilityLogs
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2717517198484513490, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: playerLookupInterval
