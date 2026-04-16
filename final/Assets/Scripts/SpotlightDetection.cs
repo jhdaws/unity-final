@@ -7,7 +7,6 @@ public class SpotlightDetection : MonoBehaviour
 
     [Header("Detection")]
     [SerializeField] private LayerMask obstacleMask = ~0;
-    [SerializeField] private float targetHeightOffset = 1.0f;
     [SerializeField] private bool debugVisibilityLogs;
 
     [Header("Damage")]
@@ -15,6 +14,7 @@ public class SpotlightDetection : MonoBehaviour
 
     private Transform playerTransform;
     private PlayerHealth playerHealth;
+    private Collider playerCollider;
     private bool playerVisible;
     private bool wasPlayerVisible;
     private Vector3 visibleAimPoint;
@@ -62,7 +62,7 @@ public class SpotlightDetection : MonoBehaviour
 
     private bool ComputeVisibility(out Vector3 aimPoint)
     {
-        aimPoint = playerTransform.position + (Vector3.up * targetHeightOffset);
+        aimPoint = GetAimPoint();
 
         Vector3 origin = spotLight.transform.position + (spotLight.transform.forward * 0.05f);
         Vector3 toTarget = aimPoint - origin;
@@ -124,10 +124,24 @@ public class SpotlightDetection : MonoBehaviour
 
         playerTransform = playerObject.transform;
         playerHealth = playerObject.GetComponent<PlayerHealth>();
-        visibleAimPoint = playerTransform.position + (Vector3.up * targetHeightOffset);
+        playerCollider =
+            playerObject.GetComponent<Collider>() ??
+            playerObject.GetComponentInChildren<Collider>();
+
+        visibleAimPoint = GetAimPoint();
 
         int playerLayerMask = 1 << playerObject.layer;
         visibilityMask = obstacleMask | playerLayerMask;
+    }
+
+    private Vector3 GetAimPoint()
+    {
+        if (playerCollider != null)
+        {
+            return playerCollider.bounds.center;
+        }
+
+        return playerTransform.position;
     }
 
     private void OnDrawGizmosSelected()
