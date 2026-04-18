@@ -52,9 +52,12 @@
     <Compile Include="Assets/Scripts/SpotlightTracking.cs" />
     <Compile Include="Assets/Scripts/PlayerHealth.cs" />
     <Compile Include="Assets/Scripts/SpotlightDetection.cs" />
+    <Compile Include="Assets/Scripts/PatrolRoute.cs" />
     <Compile Include="Assets/Scripts/FirstPersonMovement.cs" />
+    <Compile Include="Assets/Scripts/EnemyNavMeshRoamer.cs" />
     <Compile Include="Assets/TutorialInfo/Scripts/Readme.cs" />
     <Compile Include="Assets/Scripts/SpotlightSweep.cs" />
+    <Compile Include="Assets/Scripts/EnemyPatrol.cs" />
     <Compile Include="Assets/Scripts/GameManager.cs" />
   </ItemGroup>
   <ItemGroup>
