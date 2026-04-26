@@ -11,10 +11,12 @@ public class PlayerHealth : MonoBehaviour
     public UnityEvent OnDeath;
 
     private bool isDead = false;
+    private PlayerAudio playerAudio;
 
     void Awake()
     {
         currentHealth = maxHealth;
+        playerAudio = GetComponent<PlayerAudio>();
     }
 
     public void TakeDamage(float amount)
@@ -23,6 +25,7 @@ public class PlayerHealth : MonoBehaviour
 
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        playerAudio?.PlayHurt();
 
         Debug.Log($"Player took {amount:F2} damage. Health: {currentHealth:F2}/{maxHealth:F2}");
         

@@ -15,6 +15,7 @@ public class EnemyNavMeshRoamer : MonoBehaviour
     [SerializeField] private PatrolRoute patrolRoute;
     [SerializeField] private NavMeshAgent navMeshAgent;
     [SerializeField] private SpotlightTracking spotlightTracking;
+    [SerializeField] private EnemyAudio enemyAudio;
 
     [Header("Roaming")]
     [SerializeField] private RoamMode roamMode = RoamMode.Random;
@@ -38,6 +39,11 @@ public class EnemyNavMeshRoamer : MonoBehaviour
         if (spotlightTracking == null)
         {
             spotlightTracking = GetComponent<SpotlightTracking>();
+        }
+
+        if (enemyAudio == null)
+        {
+            enemyAudio = GetComponent<EnemyAudio>();
         }
     }
 
@@ -73,6 +79,7 @@ public class EnemyNavMeshRoamer : MonoBehaviour
             {
                 navMeshAgent.isStopped = true;
                 isPausedForTracking = true;
+                enemyAudio?.SetMoving(false);
             }
             return;
         }
@@ -82,6 +89,8 @@ public class EnemyNavMeshRoamer : MonoBehaviour
             navMeshAgent.isStopped = false;
             isPausedForTracking = false;
         }
+
+        enemyAudio?.SetMoving(navMeshAgent.velocity.sqrMagnitude > 0.04f);
 
         if (waitTimer > 0f)
         {
@@ -110,6 +119,7 @@ public class EnemyNavMeshRoamer : MonoBehaviour
         }
 
         waitTimer = waitAtWaypointSeconds;
+        enemyAudio?.SetMoving(false);
     }
 
     public void SetPatrolRoute(PatrolRoute newRoute, bool restartFromClosestWaypoint = true)

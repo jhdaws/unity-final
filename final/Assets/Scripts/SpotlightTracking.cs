@@ -4,10 +4,11 @@ public class SpotlightTracking : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private SpotlightDetection spotlightDetection;
+    [SerializeField] private EnemyAudio enemyAudio;
 
     [Header("Lock")]
-    [SerializeField] private float lockAcquireDelay = 0.1f;
-    [SerializeField] private float lockHoldDuration = 1.0f;
+    [SerializeField] private float lockAcquireDelay = 0.02f;
+    [SerializeField] private float lockHoldDuration = 1.5f;
     [SerializeField] private bool debugStateLogs;
 
     private bool hasTargetLock;
@@ -29,6 +30,11 @@ public class SpotlightTracking : MonoBehaviour
         if (spotlightDetection == null)
         {
             spotlightDetection = GetComponentInParent<SpotlightDetection>();
+        }
+
+        if (enemyAudio == null)
+        {
+            enemyAudio = GetComponent<EnemyAudio>();
         }
     }
 
@@ -75,6 +81,10 @@ public class SpotlightTracking : MonoBehaviour
         if (debugStateLogs && hasTargetLock != hadTargetLock)
         {
             hadTargetLock = hasTargetLock;
+            if (hasTargetLock)
+            {
+                enemyAudio?.PlayAlert();
+            }
             Debug.Log(hasTargetLock
                 ? $"{name}: lock acquired"
                 : $"{name}: lock released");

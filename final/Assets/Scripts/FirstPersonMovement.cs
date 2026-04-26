@@ -16,12 +16,14 @@ public class FirstPersonMovement : MonoBehaviour
     public Transform playerCamera; 
 
     private CharacterController controller;
+    private PlayerAudio playerAudio;
     private Vector3 velocity;
     private bool isCrouching = false;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        playerAudio = GetComponent<PlayerAudio>();
         Cursor.lockState = CursorLockMode.Locked;
     }
 
@@ -40,6 +42,7 @@ public class FirstPersonMovement : MonoBehaviour
             controller.height = crouchHeight;
             // Shift the camera down
             playerCamera.localPosition = new Vector3(0, 0.4f, 0); 
+            playerAudio?.PlayCrouch();
         }
 
         if (Input.GetKeyUp(KeyCode.LeftControl))
@@ -47,6 +50,7 @@ public class FirstPersonMovement : MonoBehaviour
             isCrouching = false;
             controller.height = standingHeight;
             playerCamera.localPosition = new Vector3(0, 0.8f, 0);
+            playerAudio?.PlayCrouch();
         }
     }
 
@@ -55,6 +59,7 @@ public class FirstPersonMovement : MonoBehaviour
         if (Input.GetButtonDown("Jump") && controller.isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            playerAudio?.PlayJump();
         }
     }
 
@@ -75,6 +80,7 @@ public class FirstPersonMovement : MonoBehaviour
         Vector3 moveDir = (forward * z + right * x).normalized;
         
         controller.Move(moveDir * currentSpeed * Time.deltaTime);
+        playerAudio?.UpdateFootsteps(moveDir.sqrMagnitude > 0.01f, controller.isGrounded);
         
         // Apply Gravity
         if (controller.isGrounded && velocity.y < 0)

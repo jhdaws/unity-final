@@ -8,6 +8,7 @@ public class SpotlightDetection : MonoBehaviour
     [Header("Detection")]
     [SerializeField] private LayerMask obstacleMask = ~0;
     [SerializeField] private bool debugVisibilityLogs;
+    [SerializeField] private float edgeAnglePadding = 4f;
 
     [Header("Damage")]
     [SerializeField] private float damagePerSecond = 20f;
@@ -62,55 +63,20 @@ public class SpotlightDetection : MonoBehaviour
 
     private bool ComputeVisibility(out Vector3 aimPoint)
     {
-        aimPoint = GetAimPoint();
-
         Vector3 origin = spotLight.transform.position + (spotLight.transform.forward * 0.05f);
-        Vector3 toTarget = aimPoint - origin;
-        float sqrDistance = toTarget.sqrMagnitude;
+        Vector3[] samplePoints = GetAimPoints();
 
-        if (sqrDistance > spotLight.range * spotLight.range)
+        for (int i = 0; i < samplePoints.Length; i++)
         {
-            return false;
-        }
-
-        float halfAngle = spotLight.spotAngle * 0.5f;
-        float angleToTarget = Vector3.Angle(spotLight.transform.forward, toTarget);
-        if (angleToTarget > halfAngle)
-        {
-            return false;
-        }
-
-        float distance = Mathf.Sqrt(sqrDistance);
-        if (distance <= 0.001f)
-        {
-            return true;
-        }
-
-        Vector3 direction = toTarget / distance;
-
-        RaycastHit[] hits = Physics.RaycastAll(origin, direction, distance, visibilityMask, QueryTriggerInteraction.Ignore);
-        if (hits.Length > 0)
-        {
-            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
-
-            for (int i = 0; i < hits.Length; i++)
+            Vector3 samplePoint = samplePoints[i];
+            if (SamplePointVisible(origin, samplePoint))
             {
-                Collider hitCollider = hits[i].collider;
-                if (hitCollider == null)
-                {
-                    continue;
-                }
-
-                Transform hitTransform = hitCollider.transform;
-                if (hitTransform == transform || hitTransform.IsChildOf(transform))
-                {
-                    continue;
-                }
-
-                return hitTransform == playerTransform || hitTransform.IsChildOf(playerTransform);
+                aimPoint = samplePoint;
+                return true;
             }
         }
 
+        aimPoint = GetAimPoint();
         return false;
     }
 
@@ -142,6 +108,80 @@ public class SpotlightDetection : MonoBehaviour
         }
 
         return playerTransform.position;
+    }
+
+    private Vector3[] GetAimPoints()
+    {
+        Vector3 center = GetAimPoint();
+        if (playerCollider == null)
+        {
+            return new[] { center };
+        }
+
+        Bounds bounds = playerCollider.bounds;
+        Vector3 extents = bounds.extents;
+
+        return new[]
+        {
+            center,
+            center + Vector3.up * extents.y,
+            center - Vector3.up * extents.y,
+            center + Vector3.right * extents.x,
+            center - Vector3.right * extents.x,
+            center + Vector3.forward * extents.z,
+            center - Vector3.forward * extents.z
+        };
+    }
+
+    private bool SamplePointVisible(Vector3 origin, Vector3 samplePoint)
+    {
+        Vector3 toTarget = samplePoint - origin;
+        float sqrDistance = toTarget.sqrMagnitude;
+        if (sqrDistance > spotLight.range * spotLight.range)
+        {
+            return false;
+        }
+
+        float halfAngle = (spotLight.spotAngle * 0.5f) + edgeAnglePadding;
+        float angleToTarget = Vector3.Angle(spotLight.transform.forward, toTarget);
+        if (angleToTarget > halfAngle)
+        {
+            return false;
+        }
+
+        float distance = Mathf.Sqrt(sqrDistance);
+        if (distance <= 0.001f)
+        {
+            return true;
+        }
+
+        Vector3 direction = toTarget / distance;
+        RaycastHit[] hits = Physics.RaycastAll(origin, direction, distance, visibilityMask, QueryTriggerInteraction.Ignore);
+        if (hits.Length == 0)
+        {
+            return false;
+        }
+
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        for (int i = 0; i < hits.Length; i++)
+        {
+            Collider hitCollider = hits[i].collider;
+            if (hitCollider == null)
+            {
+                continue;
+            }
+
+            Transform hitTransform = hitCollider.transform;
+            if (hitTransform == transform || hitTransform.IsChildOf(transform))
+            {
+                continue;
+            }
+
+            return hitTransform == playerTransform || hitTransform.IsChildOf(playerTransform);
+        }
+
+        return false;
     }
 
     private void OnDrawGizmosSelected()
