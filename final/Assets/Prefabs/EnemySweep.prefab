@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemySweep
       objectReference: {fileID: 0}
+    - target: {fileID: 6156668449585650637, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -4432124805086160128, guid: ba37de1706938402e9584ac1b9bcb665, type: 3}
     - target: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.736
