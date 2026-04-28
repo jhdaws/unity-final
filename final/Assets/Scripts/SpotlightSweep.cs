@@ -14,12 +14,13 @@ public class SpotlightSweep : MonoBehaviour
 
     [Header("Tracking")]
     [SerializeField] private float trackingDegreesPerSecond = 180f;
-    [SerializeField] private bool trackPitch;
 
-    private Quaternion initialLocalRotation;
-    private float currentSweepAngle;
+    [Header("Debug")]
+    [SerializeField] private bool debugSweepLogs;
+
+    private Quaternion baseLocalRotation;
+    private float currentYaw;
     private float sweepDirection = 1f;
-    private bool wasTrackingLastFrame;
 
     private void Awake()
     {
@@ -41,8 +42,12 @@ public class SpotlightSweep : MonoBehaviour
 
     private void Start()
     {
-        initialLocalRotation = sweepPivot.localRotation;
-        currentSweepAngle = 0f;
+        baseLocalRotation = sweepPivot.localRotation;
+
+        if (debugSweepLogs)
+        {
+            Debug.Log($"{name}: sweep started on {sweepPivot.name}.");
+        }
     }
 
     private void Update()
@@ -52,76 +57,88 @@ public class SpotlightSweep : MonoBehaviour
             return;
         }
 
-        Quaternion targetRotation = sweepPivot.rotation;
-        bool isTracking = false;
-        if (spotlightTracking != null)
+        if (spotlightTracking != null && spotlightTracking.HasTargetLock)
         {
-            isTracking = spotlightTracking.TryGetTrackedLookRotation(
-                sweepPivot.position,
-                trackPitch,
-                out targetRotation);
+            TrackTarget();
+            return;
         }
 
-        if (isTracking)
+        Sweep();
+    }
+
+    private void Sweep()
+    {
+        if (fullRotationMode || rotationAngle >= 179.9f)
         {
-            sweepPivot.rotation = Quaternion.RotateTowards(
-                sweepPivot.rotation,
-                targetRotation,
-                trackingDegreesPerSecond * Time.deltaTime);
+            currentYaw += fullRotationDegreesPerSecond * Time.deltaTime;
+            currentYaw = Mathf.Repeat(currentYaw, 360f);
         }
         else
         {
-            if (wasTrackingLastFrame)
-            {
-                currentSweepAngle = GetCurrentLocalYawOffset();
-            }
+            currentYaw += sweepDirection * sweepSpeed * Time.deltaTime;
 
-            if (fullRotationMode || rotationAngle >= 179.9f)
+            if (currentYaw >= rotationAngle)
             {
-                currentSweepAngle += fullRotationDegreesPerSecond * Time.deltaTime;
-                currentSweepAngle = Mathf.Repeat(currentSweepAngle, 360f);
+                currentYaw = rotationAngle;
+                sweepDirection = -1f;
             }
-            else
+            else if (currentYaw <= -rotationAngle)
             {
-                currentSweepAngle += sweepDirection * sweepSpeed * Time.deltaTime;
-
-                if (currentSweepAngle > rotationAngle)
-                {
-                    currentSweepAngle = rotationAngle;
-                    sweepDirection = -1f;
-                }
-                else if (currentSweepAngle < -rotationAngle)
-                {
-                    currentSweepAngle = -rotationAngle;
-                    sweepDirection = 1f;
-                }
+                currentYaw = -rotationAngle;
+                sweepDirection = 1f;
             }
-
-            sweepPivot.localRotation = initialLocalRotation * Quaternion.Euler(0f, currentSweepAngle, 0f);
         }
 
-        wasTrackingLastFrame = isTracking;
+        ApplyYaw();
     }
 
-    private float GetCurrentLocalYawOffset()
+    private void TrackTarget()
     {
-        Quaternion delta = Quaternion.Inverse(initialLocalRotation) * sweepPivot.localRotation;
-        float yaw = NormalizeAngle(delta.eulerAngles.y);
+        Vector3 toTarget = spotlightTracking.CurrentAimPoint - sweepPivot.position;
 
-        if (fullRotationMode || rotationAngle >= 179.9f)
+        if (toTarget.sqrMagnitude <= 0.0001f)
         {
-            return Mathf.Repeat(yaw + 360f, 360f);
+            return;
         }
 
-        return Mathf.Clamp(yaw, -rotationAngle, rotationAngle);
+        Quaternion parentRotation = GetParentRotation();
+        Vector3 parentLocalDirection = Quaternion.Inverse(parentRotation) * toTarget;
+        parentLocalDirection.y = 0f;
+
+        if (parentLocalDirection.sqrMagnitude <= 0.0001f)
+        {
+            return;
+        }
+
+        Vector3 baseForward = baseLocalRotation * Vector3.forward;
+        baseForward.y = 0f;
+
+        float baseYaw = baseForward.sqrMagnitude > 0.0001f
+            ? Mathf.Atan2(baseForward.x, baseForward.z) * Mathf.Rad2Deg
+            : 0f;
+
+        float targetYaw = Mathf.Atan2(parentLocalDirection.x, parentLocalDirection.z) * Mathf.Rad2Deg - baseYaw;
+
+        currentYaw = Mathf.MoveTowardsAngle(
+            currentYaw,
+            targetYaw,
+            trackingDegreesPerSecond * Time.deltaTime);
+
+        ApplyYaw();
     }
 
-    private static float NormalizeAngle(float angle)
+    private void ApplyYaw()
     {
-        if (angle > 180f)
-        {
-            angle -= 360f;
-        }
-        return angle;
+        Quaternion parentRotation = GetParentRotation();
+        Vector3 sweepAxis = parentRotation * Vector3.up;
+        Quaternion baseWorldRotation = parentRotation * baseLocalRotation;
+        Quaternion targetWorldRotation = Quaternion.AngleAxis(currentYaw, sweepAxis) * baseWorldRotation;
+
+        sweepPivot.localRotation = Quaternion.Inverse(parentRotation) * targetWorldRotation;
+    }
+
+    private Quaternion GetParentRotation()
+    {
+        return sweepPivot.parent != null ? sweepPivot.parent.rotation : Quaternion.identity;
     }
 }

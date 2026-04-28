@@ -9,6 +9,7 @@ public class SpotlightDetection : MonoBehaviour
     [SerializeField] private LayerMask obstacleMask = ~0;
     [SerializeField] private bool debugVisibilityLogs;
     [SerializeField] private float edgeAnglePadding = 4f;
+    [SerializeField] private QueryTriggerInteraction triggerInteraction = QueryTriggerInteraction.Ignore;
 
     [Header("Damage")]
     [SerializeField] private float damagePerSecond = 20f;
@@ -19,6 +20,7 @@ public class SpotlightDetection : MonoBehaviour
     private bool playerVisible;
     private bool wasPlayerVisible;
     private Vector3 visibleAimPoint;
+    private int playerLayerMask;
     private int visibilityMask;
 
     public bool PlayerVisible => playerVisible;
@@ -96,7 +98,7 @@ public class SpotlightDetection : MonoBehaviour
 
         visibleAimPoint = GetAimPoint();
 
-        int playerLayerMask = 1 << playerObject.layer;
+        playerLayerMask = 1 << playerObject.layer;
         visibilityMask = obstacleMask | playerLayerMask;
     }
 
@@ -156,7 +158,8 @@ public class SpotlightDetection : MonoBehaviour
         }
 
         Vector3 direction = toTarget / distance;
-        RaycastHit[] hits = Physics.RaycastAll(origin, direction, distance, visibilityMask, QueryTriggerInteraction.Ignore);
+        int rayMask = visibilityMask != 0 ? visibilityMask : ~0;
+        RaycastHit[] hits = Physics.RaycastAll(origin, direction, distance, rayMask, triggerInteraction);
         if (hits.Length == 0)
         {
             return false;
@@ -178,7 +181,22 @@ public class SpotlightDetection : MonoBehaviour
                 continue;
             }
 
-            return hitTransform == playerTransform || hitTransform.IsChildOf(playerTransform);
+            if (hitTransform == playerTransform || hitTransform.IsChildOf(playerTransform))
+            {
+                return true;
+            }
+
+            if (((1 << hitCollider.gameObject.layer) & obstacleMask) != 0)
+            {
+                if (debugVisibilityLogs)
+                {
+                    Debug.Log($"{name}: spotlight blocked by {hitCollider.name}.");
+                }
+
+                return false;
+            }
+
+            return false;
         }
 
         return false;
@@ -194,4 +212,5 @@ public class SpotlightDetection : MonoBehaviour
         Gizmos.color = playerVisible ? Color.red : Color.yellow;
         Gizmos.DrawRay(spotLight.transform.position, spotLight.transform.forward * spotLight.range);
     }
+
 }

@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1521113556523316910, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 5609274704457976874, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_Name
       value: EnemySweep
@@ -18,31 +22,31 @@ PrefabInstance:
       objectReference: {fileID: -4432124805086160128, guid: ba37de1706938402e9584ac1b9bcb665, type: 3}
     - target: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.736
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.994
+      value: 0.001142323
       objectReference: {fileID: 0}
     - target: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 35.365
+      value: 0.0031661838
       objectReference: {fileID: 0}
     - target: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.8713718
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.49062327
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -50,11 +54,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -58.763
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8561211743273434879, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -8644398757814436027, guid: 75728040baeb144beb9a01987670c7d9, type: 3}
+    - target: {fileID: 8789391421667342122, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.8191521
+      objectReference: {fileID: 0}
+    - target: {fileID: 8789391421667342122, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.5735764
+      objectReference: {fileID: 0}
+    - target: {fileID: 8789391421667342122, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 70
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -85,8 +105,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpotlightTracking
   spotlightDetection: {fileID: 8468733850875962508}
-  lockAcquireDelay: 0.1
-  lockHoldDuration: 1
+  enemyAudio: {fileID: 0}
+  lockAcquireDelay: 0.02
+  lockHoldDuration: 1.5
   debugStateLogs: 0
 --- !u!4 &4984472512965177584 stripped
 Transform:
@@ -113,7 +134,7 @@ MonoBehaviour:
   sweepPivot: {fileID: 4984472512965177584}
   spotlightTracking: {fileID: 0}
   rotationAngle: 180
-  sweepSpeed: 1.5
+  sweepSpeed: 45
   fullRotationMode: 0
   fullRotationDegreesPerSecond: 90
   trackingDegreesPerSecond: 180
