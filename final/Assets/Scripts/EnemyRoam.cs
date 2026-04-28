@@ -2,32 +2,28 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class EnemyNavMeshRoamer : MonoBehaviour
+public class EnemyRoam : MonoBehaviour
 {
-    private enum RoamMode
-    {
-        Loop,
-        PingPong,
-        Random
-    }
-
     [Header("References")]
     [SerializeField] private PatrolRoute patrolRoute;
     [SerializeField] private NavMeshAgent navMeshAgent;
-    [SerializeField] private SpotlightTracking spotlightTracking;
+    [SerializeField] private EnemyLockOn lockOn;
     [SerializeField] private EnemyAudio enemyAudio;
 
     [Header("Roaming")]
-    [SerializeField] private RoamMode roamMode = RoamMode.Random;
     [SerializeField] private bool startAtClosestWaypoint = true;
     [SerializeField] private float waitAtWaypointSeconds = 0.75f;
     [SerializeField] private float waypointSampleRadius = 1.0f;
     [SerializeField] private bool pauseWhileTracking = true;
 
+    [Header("Lock Rotation")]
+    [SerializeField] private float lockTurnSpeed = 180f;
+
     private int currentWaypointIndex = -1;
     private int travelDirection = 1;
     private float waitTimer;
     private bool isPausedForTracking;
+    private bool defaultUpdateRotation;
 
     private void Awake()
     {
@@ -36,14 +32,19 @@ public class EnemyNavMeshRoamer : MonoBehaviour
             navMeshAgent = GetComponent<NavMeshAgent>();
         }
 
-        if (spotlightTracking == null)
+        if (lockOn == null)
         {
-            spotlightTracking = GetComponent<SpotlightTracking>();
+            lockOn = GetComponent<EnemyLockOn>();
         }
 
         if (enemyAudio == null)
         {
             enemyAudio = GetComponent<EnemyAudio>();
+        }
+
+        if (navMeshAgent != null)
+        {
+            defaultUpdateRotation = navMeshAgent.updateRotation;
         }
     }
 
@@ -68,26 +69,34 @@ public class EnemyNavMeshRoamer : MonoBehaviour
 
     private void Update()
     {
-        if (patrolRoute == null || patrolRoute.Count == 0 || navMeshAgent == null)
+        if (navMeshAgent == null)
         {
             return;
         }
 
-        if (pauseWhileTracking && spotlightTracking != null && spotlightTracking.HasTargetLock)
+        if (pauseWhileTracking && lockOn != null && lockOn.HasTargetLock)
         {
             if (!isPausedForTracking)
             {
                 navMeshAgent.isStopped = true;
+                navMeshAgent.updateRotation = false;
                 isPausedForTracking = true;
                 enemyAudio?.SetMoving(false);
             }
+            RotateTowardLockTarget();
             return;
         }
 
         if (isPausedForTracking)
         {
             navMeshAgent.isStopped = false;
+            navMeshAgent.updateRotation = defaultUpdateRotation;
             isPausedForTracking = false;
+        }
+
+        if (patrolRoute == null || patrolRoute.Count == 0)
+        {
+            return;
         }
 
         enemyAudio?.SetMoving(navMeshAgent.velocity.sqrMagnitude > 0.04f);
@@ -168,35 +177,31 @@ public class EnemyNavMeshRoamer : MonoBehaviour
             return;
         }
 
-        switch (roamMode)
+        currentWaypointIndex += travelDirection;
+
+        if (currentWaypointIndex >= patrolRoute.Count)
         {
-            case RoamMode.Loop:
-                currentWaypointIndex = (currentWaypointIndex + 1) % patrolRoute.Count;
-                break;
-
-            case RoamMode.PingPong:
-                currentWaypointIndex += travelDirection;
-
-                if (currentWaypointIndex >= patrolRoute.Count)
-                {
-                    travelDirection = -1;
-                    currentWaypointIndex = patrolRoute.Count - 2;
-                }
-                else if (currentWaypointIndex < 0)
-                {
-                    travelDirection = 1;
-                    currentWaypointIndex = 1;
-                }
-                break;
-
-            case RoamMode.Random:
-                int nextIndex = currentWaypointIndex;
-                while (nextIndex == currentWaypointIndex && patrolRoute.Count > 1)
-                {
-                    nextIndex = Random.Range(0, patrolRoute.Count);
-                }
-                currentWaypointIndex = nextIndex;
-                break;
+            travelDirection = -1;
+            currentWaypointIndex = patrolRoute.Count - 2;
         }
+        else if (currentWaypointIndex < 0)
+        {
+            travelDirection = 1;
+            currentWaypointIndex = 1;
+        }
+    }
+
+    private void RotateTowardLockTarget()
+    {
+        if (lockOn == null || !lockOn.TryGetFlatDirection(transform.position, out Vector3 direction))
+        {
+            return;
+        }
+
+        Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+        transform.rotation = Quaternion.RotateTowards(
+            transform.rotation,
+            targetRotation,
+            lockTurnSpeed * Time.deltaTime);
     }
 }

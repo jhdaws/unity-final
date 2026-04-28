@@ -49,16 +49,16 @@
     <Analyzer Include="/Applications/Unity/Hub/Editor/6000.3.6f1/Unity.app/Contents/Resources/BuildPipeline/Unity.SourceGenerators/Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets/Scripts/SpotlightTracking.cs" />
+    <Compile Include="Assets/Scripts/EnemyLockOn.cs" />
     <Compile Include="Assets/Scripts/PlayerHealth.cs" />
     <Compile Include="Assets/Scripts/EnemyAudio.cs" />
+    <Compile Include="Assets/Scripts/EnemySweep.cs" />
+    <Compile Include="Assets/Scripts/Enemy.cs" />
     <Compile Include="Assets/Scripts/SceneAudioLoop.cs" />
-    <Compile Include="Assets/Scripts/SpotlightDetection.cs" />
     <Compile Include="Assets/Scripts/PatrolRoute.cs" />
     <Compile Include="Assets/Scripts/FirstPersonMovement.cs" />
-    <Compile Include="Assets/Scripts/EnemyNavMeshRoamer.cs" />
+    <Compile Include="Assets/Scripts/EnemyRoam.cs" />
     <Compile Include="Assets/TutorialInfo/Scripts/Readme.cs" />
-    <Compile Include="Assets/Scripts/SpotlightSweep.cs" />
     <Compile Include="Assets/Scripts/EnemyPatrol.cs" />
     <Compile Include="Assets/Scripts/PlayerAudio.cs" />
     <Compile Include="Assets/Scripts/GameManager.cs" />

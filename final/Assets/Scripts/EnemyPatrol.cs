@@ -11,7 +11,7 @@ public class EnemyPatrol : MonoBehaviour
     [Header("References")]
     [SerializeField] private PatrolRoute patrolRoute;
     [SerializeField] private Transform movementRoot;
-    [SerializeField] private SpotlightTracking spotlightTracking;
+    [SerializeField] private EnemyLockOn lockOn;
 
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 2.5f;
@@ -35,9 +35,9 @@ public class EnemyPatrol : MonoBehaviour
             movementRoot = transform;
         }
 
-        if (spotlightTracking == null)
+        if (lockOn == null)
         {
-            spotlightTracking = GetComponent<SpotlightTracking>();
+            lockOn = GetComponent<EnemyLockOn>();
         }
     }
 
@@ -53,7 +53,7 @@ public class EnemyPatrol : MonoBehaviour
             return;
         }
 
-        if (pauseWhileTracking && spotlightTracking != null && spotlightTracking.HasTargetLock)
+        if (pauseWhileTracking && lockOn != null && lockOn.HasTargetLock)
         {
             return;
         }

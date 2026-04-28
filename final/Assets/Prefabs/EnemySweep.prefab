@@ -83,7 +83,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5609274704457976874, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5602672561050445552}
-    - targetCorrespondingSourceObject: {fileID: 1984443550813910574, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 5609274704457976874, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
       insertIndex: -1
       addedObject: {fileID: 9071488154883192121}
   m_SourcePrefab: {fileID: 100100000, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
@@ -103,42 +103,37 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8c6d3493b0559499591efe393aafbf31, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpotlightTracking
-  spotlightDetection: {fileID: 8468733850875962508}
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyLockOn
+  enemy: {fileID: 8468733850875962508}
   enemyAudio: {fileID: 0}
   lockAcquireDelay: 0.02
   lockHoldDuration: 1.5
   debugStateLogs: 0
---- !u!4 &4984472512965177584 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1521113556523316910, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
-  m_PrefabInstance: {fileID: 5778245792660096606}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &5456773997615476848 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1984443550813910574, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
-  m_PrefabInstance: {fileID: 5778245792660096606}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &9071488154883192121
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5456773997615476848}
+  m_GameObject: {fileID: 2155067464066255476}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cf989ee90d63e477cac7eb4fc3b2e566, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpotlightSweep
-  sweepPivot: {fileID: 4984472512965177584}
-  spotlightTracking: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySweep
+  rotationRoot: {fileID: 4217418718368388456}
+  lockOn: {fileID: 5602672561050445552}
   rotationAngle: 180
   sweepSpeed: 45
   fullRotationMode: 0
   fullRotationDegreesPerSecond: 90
   trackingDegreesPerSecond: 180
-  trackPitch: 0
+  debugSweepLogs: 0
+--- !u!4 &4217418718368388456 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7689672157198603062, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
+  m_PrefabInstance: {fileID: 5778245792660096606}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &8468733850875962508 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2717517198484513490, guid: bb934d0ef3c664c7bae7e18f6b17deef, type: 3}
@@ -149,4 +144,4 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8c219b6377b6b4f31b19a583c5186b07, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpotlightDetection
+  m_EditorClassIdentifier: Assembly-CSharp::Enemy

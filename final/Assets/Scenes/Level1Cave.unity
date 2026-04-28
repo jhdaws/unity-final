@@ -8561,6 +8561,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemySweep
       objectReference: {fileID: 0}
+    - target: {fileID: 3011292972697153908, guid: 26de74f27cc354c84b1f7f45652ba59a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7758019
+      objectReference: {fileID: 0}
+    - target: {fileID: 3011292972697153908, guid: 26de74f27cc354c84b1f7f45652ba59a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.5432222
+      objectReference: {fileID: 0}
+    - target: {fileID: 3011292972697153908, guid: 26de74f27cc354c84b1f7f45652ba59a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.18411808
+      objectReference: {fileID: 0}
+    - target: {fileID: 3011292972697153908, guid: 26de74f27cc354c84b1f7f45652ba59a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.26294795
+      objectReference: {fileID: 0}
+    - target: {fileID: 3011292972697153908, guid: 26de74f27cc354c84b1f7f45652ba59a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 37.447
+      objectReference: {fileID: 0}
     - target: {fileID: 4217418718368388456, guid: 26de74f27cc354c84b1f7f45652ba59a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 53.282

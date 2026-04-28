@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class SpotlightTracking : MonoBehaviour
+public class EnemyLockOn : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private SpotlightDetection spotlightDetection;
+    [SerializeField] private Enemy enemy;
     [SerializeField] private EnemyAudio enemyAudio;
 
     [Header("Lock")]
@@ -22,14 +22,14 @@ public class SpotlightTracking : MonoBehaviour
 
     private void Awake()
     {
-        if (spotlightDetection == null)
+        if (enemy == null)
         {
-            spotlightDetection = GetComponent<SpotlightDetection>();
+            enemy = GetComponent<Enemy>();
         }
 
-        if (spotlightDetection == null)
+        if (enemy == null)
         {
-            spotlightDetection = GetComponentInParent<SpotlightDetection>();
+            enemy = GetComponentInParent<Enemy>();
         }
 
         if (enemyAudio == null)
@@ -40,23 +40,23 @@ public class SpotlightTracking : MonoBehaviour
 
     private void Start()
     {
-        if (spotlightDetection != null && spotlightDetection.PlayerTransform != null)
+        if (enemy != null && enemy.PlayerTransform != null)
         {
-            trackedAimPoint = spotlightDetection.CurrentVisibleAimPoint;
+            trackedAimPoint = enemy.CurrentVisibleAimPoint;
         }
     }
 
     private void Update()
     {
-        if (spotlightDetection == null)
+        if (enemy == null)
         {
             return;
         }
 
-        if (spotlightDetection.PlayerVisible)
+        if (enemy.PlayerVisible)
         {
             visibleTimer += Time.deltaTime;
-            trackedAimPoint = spotlightDetection.CurrentVisibleAimPoint;
+            trackedAimPoint = enemy.CurrentVisibleAimPoint;
 
             if (visibleTimer >= lockAcquireDelay)
             {
@@ -78,39 +78,40 @@ public class SpotlightTracking : MonoBehaviour
             }
         }
 
-        if (debugStateLogs && hasTargetLock != hadTargetLock)
+        if (hasTargetLock != hadTargetLock)
         {
             hadTargetLock = hasTargetLock;
             if (hasTargetLock)
             {
                 enemyAudio?.PlayAlert();
             }
-            Debug.Log(hasTargetLock
-                ? $"{name}: lock acquired"
-                : $"{name}: lock released");
+
+            if (debugStateLogs)
+            {
+                Debug.Log(hasTargetLock
+                    ? $"{name}: lock acquired"
+                    : $"{name}: lock released");
+            }
         }
     }
 
-    public bool TryGetTrackedLookRotation(Vector3 pivotPosition, bool trackPitch, out Quaternion rotation)
+    public bool TryGetFlatDirection(Vector3 origin, out Vector3 direction)
     {
-        rotation = Quaternion.identity;
+        direction = Vector3.zero;
         if (!hasTargetLock)
         {
             return false;
         }
 
-        Vector3 direction = trackedAimPoint - pivotPosition;
-        if (!trackPitch)
-        {
-            direction.y = 0f;
-        }
+        direction = trackedAimPoint - origin;
+        direction.y = 0f;
 
         if (direction.sqrMagnitude <= 0.0001f)
         {
             return false;
         }
 
-        rotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
+        direction.Normalize();
         return true;
     }
 }

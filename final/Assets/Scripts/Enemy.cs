@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SpotlightDetection : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Light spotLight;
